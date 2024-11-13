@@ -445,11 +445,13 @@ function createIssue(branch, commitAge, lastCommitter, daysBeforeDelete, staleBr
     return __awaiter(this, void 0, void 0, function* () {
         let issueId;
         let bodyString;
+        let assignees = [];
         const daysUntilDelete = Math.max(0, daysBeforeDelete - commitAge);
         const issueTitleString = (0, create_issues_title_string_1.createIssueTitleString)(branch);
         switch (tagLastCommitter) {
             case true:
                 bodyString = `@${lastCommitter}, \r \r ${branch} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`;
+                assignees.push(lastCommitter);
                 break;
             case false:
                 bodyString = `${branch} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`;
@@ -461,6 +463,7 @@ function createIssue(branch, commitAge, lastCommitter, daysBeforeDelete, staleBr
                 repo: get_context_1.repo,
                 title: issueTitleString,
                 body: bodyString,
+                assignees: assignees,
                 labels: [
                     {
                         name: staleBranchLabel,
@@ -1733,6 +1736,71 @@ function logUpdateIssue(issueNumber, createdAt, commentUrl) {
 
 /***/ }),
 
+/***/ 9732:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.updateAssignee = updateAssignee;
+const get_context_1 = __nccwpck_require__(7782);
+const core = __importStar(__nccwpck_require__(2186));
+function updateAssignee(issueNumber, lastCommitter) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield get_context_1.github.rest.issues.update({
+                owner: get_context_1.owner,
+                repo: get_context_1.repo,
+                issue_number: issueNumber,
+                assignees: [lastCommitter]
+            });
+        }
+        catch (err) {
+            if (err instanceof Error) {
+                core.info(`No existing issue returned for issue number: ${issueNumber}. Description: ${err.message}`);
+            }
+            else {
+                core.info(`No existing issue returned for issue number: ${issueNumber}.`);
+            }
+        }
+    });
+}
+
+
+/***/ }),
+
 /***/ 9576:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -1976,6 +2044,7 @@ const filter_branches_1 = __nccwpck_require__(6261);
 const get_pr_1 = __nccwpck_require__(2376);
 const log_skipped_branch_1 = __nccwpck_require__(3433);
 const log_branch_group_color_skip_1 = __nccwpck_require__(4792);
+const update_assignee_1 = __nccwpck_require__(9732);
 function closeIssueWrappedLogs(issueNumber, validInputs, branchName) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!validInputs.ignoreIssueInteraction && !validInputs.dryRun) {
@@ -2077,6 +2146,9 @@ function run() {
                         if (issueToUpdate.issueTitle === issueTitleString) {
                             if (!validInputs.dryRun && !validInputs.ignoreIssueInteraction) {
                                 yield (0, create_issue_comment_1.createIssueComment)(issueToUpdate.issueNumber, branchToCheck.branchName, commitAge, lastCommitLogin, validInputs.commentUpdates, validInputs.daysBeforeDelete, validInputs.staleBranchLabel, validInputs.tagLastCommitter);
+                                if (validInputs.tagLastCommitter) {
+                                    yield (0, update_assignee_1.updateAssignee)(issueToUpdate.issueNumber, lastCommitLogin);
+                                }
                             }
                             else if (validInputs.dryRun) {
                                 core.info(`Dry Run: Issue would be updated for branch: ${branchToCheck.branchName}`);

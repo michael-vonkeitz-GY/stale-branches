@@ -25,6 +25,7 @@ import {getPr} from './functions/get-pr'
 import {logSkippedBranch} from './functions/logging/log-skipped-branch'
 import {logBranchGroupColorSkip} from './functions/logging/log-branch-group-color-skip'
 import {Inputs} from './types/inputs'
+import {updateAssignee} from './functions/update-assignee'
 
 async function closeIssueWrappedLogs(issueNumber: number, validInputs: Inputs, branchName: string): Promise<string> {
   if (!validInputs.ignoreIssueInteraction && !validInputs.dryRun) {
@@ -140,6 +141,9 @@ export async function run(): Promise<void> {
                 validInputs.staleBranchLabel,
                 validInputs.tagLastCommitter
               )
+              if (validInputs.tagLastCommitter) {
+                await updateAssignee(issueToUpdate.issueNumber, lastCommitLogin)
+              }
             } else if (validInputs.dryRun) {
               core.info(`Dry Run: Issue would be updated for branch: ${branchToCheck.branchName}`)
             } else if (validInputs.ignoreIssueInteraction) {
