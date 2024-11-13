@@ -16,14 +16,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Stale Branches
-      uses: crs-k/stale-branches@v6.0.2
+      uses: michael-vonkeitz/stale-branches@feature/assign-last-committer
       with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        days-before-stale: 1
+        repo-token: "${{ secrets.STALE_BRANCHES }}"
+        days-before-stale: 0
         comment-updates: true
-        tag-committer: true
+        tag-committer: false
         days-before-delete: 180
         max-issues: 20
         stale-branch-label: 'stale branch 🗑️'
         branches-filter-regex: '^((?!dependabot))'
         pr-check: true
+        include-protected-branches: true
