@@ -451,11 +451,11 @@ function createIssue(branch, commitAge, lastCommitter, daysBeforeDelete, staleBr
         const issueTitleString = (0, create_issues_title_string_1.createIssueTitleString)(branch);
         switch (tagLastCommitter) {
             case true:
-                bodyString = `@${lastCommitter}, \r \r ${(0, generateBranchUrl_1.generateBranchUrl)(get_context_1.owner, get_context_1.repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`;
+                bodyString = `@${lastCommitter}, \r \r [${branch}](${(0, generateBranchUrl_1.generateBranchUrl)(get_context_1.owner, get_context_1.repo, branch)}) has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`;
                 assignees.push(lastCommitter);
                 break;
             case false:
-                bodyString = `${(0, generateBranchUrl_1.generateBranchUrl)(get_context_1.owner, get_context_1.repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`;
+                bodyString = `[${branch}](${(0, generateBranchUrl_1.generateBranchUrl)(get_context_1.owner, get_context_1.repo, branch)}) has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`;
                 break;
         }
         try {
@@ -1831,10 +1831,10 @@ function createCommentString(branch, lastCommitter, commitAge, daysBeforeDelete,
     let bodyString;
     switch (tagLastCommitter) {
         case true:
-            bodyString = `@${lastCommitter}, \r \r ${(0, generateBranchUrl_1.generateBranchUrl)(get_context_1.owner, get_context_1.repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days. \r \r This issue was last updated on ${new Date().toString()}`;
+            bodyString = `@${lastCommitter}, \r \r [${branch}](${(0, generateBranchUrl_1.generateBranchUrl)(get_context_1.owner, get_context_1.repo, branch)}) has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days. \r \r This issue was last updated on ${new Date().toString()}`;
             break;
         case false:
-            bodyString = `${(0, generateBranchUrl_1.generateBranchUrl)(get_context_1.owner, get_context_1.repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days. \r \r This issue was last updated on ${new Date().toString()}`;
+            bodyString = `[${branch}](${(0, generateBranchUrl_1.generateBranchUrl)(get_context_1.owner, get_context_1.repo, branch)}) has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days. \r \r This issue was last updated on ${new Date().toString()}`;
             break;
     }
     return bodyString;

@@ -22,10 +22,10 @@ export function createCommentString(branch: string, lastCommitter: string, commi
   let bodyString: string
   switch (tagLastCommitter) {
     case true:
-      bodyString = `@${lastCommitter}, \r \r ${generateBranchUrl(owner, repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days. \r \r This issue was last updated on ${new Date().toString()}`
+      bodyString = `@${lastCommitter}, \r \r [${branch}](${generateBranchUrl(owner, repo, branch)}) has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days. \r \r This issue was last updated on ${new Date().toString()}`
       break
     case false:
-      bodyString = `${generateBranchUrl(owner, repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days. \r \r This issue was last updated on ${new Date().toString()}`
+      bodyString = `[${branch}](${generateBranchUrl(owner, repo, branch)}) has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days. \r \r This issue was last updated on ${new Date().toString()}`
       break
   }
 

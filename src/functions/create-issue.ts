@@ -31,11 +31,11 @@ export async function createIssue(branch: string, commitAge: number, lastCommitt
 
   switch (tagLastCommitter) {
     case true:
-      bodyString = `@${lastCommitter}, \r \r ${generateBranchUrl(owner, repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`
+      bodyString = `@${lastCommitter}, \r \r [${branch}](${generateBranchUrl(owner, repo, branch)}) has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`
       assignees.push(lastCommitter)
       break
     case false:
-      bodyString = `${generateBranchUrl(owner, repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`
+      bodyString = `[${branch}](${generateBranchUrl(owner, repo, branch)}) has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`
       break
   }
 
