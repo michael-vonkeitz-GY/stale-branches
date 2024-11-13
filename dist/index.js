@@ -424,6 +424,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const get_context_1 = __nccwpck_require__(7782);
 const create_issues_title_string_1 = __nccwpck_require__(7594);
 const log_new_issue_1 = __nccwpck_require__(2344);
+const generateBranchUrl_1 = __nccwpck_require__(5304);
 /**
  * Creates a GitHub issue
  *
@@ -445,16 +446,16 @@ function createIssue(branch, commitAge, lastCommitter, daysBeforeDelete, staleBr
     return __awaiter(this, void 0, void 0, function* () {
         let issueId;
         let bodyString;
-        let assignees = [];
+        const assignees = [];
         const daysUntilDelete = Math.max(0, daysBeforeDelete - commitAge);
         const issueTitleString = (0, create_issues_title_string_1.createIssueTitleString)(branch);
         switch (tagLastCommitter) {
             case true:
-                bodyString = `@${lastCommitter}, \r \r ${branch} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`;
+                bodyString = `@${lastCommitter}, \r \r ${(0, generateBranchUrl_1.generateBranchUrl)(get_context_1.owner, get_context_1.repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`;
                 assignees.push(lastCommitter);
                 break;
             case false:
-                bodyString = `${branch} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`;
+                bodyString = `${(0, generateBranchUrl_1.generateBranchUrl)(get_context_1.owner, get_context_1.repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`;
                 break;
         }
         try {
@@ -463,7 +464,7 @@ function createIssue(branch, commitAge, lastCommitter, daysBeforeDelete, staleBr
                 repo: get_context_1.repo,
                 title: issueTitleString,
                 body: bodyString,
-                assignees: assignees,
+                assignees,
                 labels: [
                     {
                         name: staleBranchLabel,
@@ -1802,12 +1803,14 @@ function updateAssignee(issueNumber, lastCommitter) {
 /***/ }),
 
 /***/ 9576:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createCommentString = createCommentString;
+const get_context_1 = __nccwpck_require__(7782);
+const generateBranchUrl_1 = __nccwpck_require__(5304);
 /**
  * Creates comment string string for GitHub issues
  *
@@ -1828,10 +1831,10 @@ function createCommentString(branch, lastCommitter, commitAge, daysBeforeDelete,
     let bodyString;
     switch (tagLastCommitter) {
         case true:
-            bodyString = `@${lastCommitter}, \r \r ${branch} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days. \r \r This issue was last updated on ${new Date().toString()}`;
+            bodyString = `@${lastCommitter}, \r \r ${(0, generateBranchUrl_1.generateBranchUrl)(get_context_1.owner, get_context_1.repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days. \r \r This issue was last updated on ${new Date().toString()}`;
             break;
         case false:
-            bodyString = `${branch} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days. \r \r This issue was last updated on ${new Date().toString()}`;
+            bodyString = `${(0, generateBranchUrl_1.generateBranchUrl)(get_context_1.owner, get_context_1.repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days. \r \r This issue was last updated on ${new Date().toString()}`;
             break;
     }
     return bodyString;
@@ -1919,6 +1922,20 @@ function filterBranches(branches, branchesFilterRegex) {
         }
         return branches;
     });
+}
+
+
+/***/ }),
+
+/***/ 5304:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.generateBranchUrl = generateBranchUrl;
+function generateBranchUrl(owner, repo, branch) {
+    return `https://github.com/${owner}/${repo}/tree/${branch}`;
 }
 
 

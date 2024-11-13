@@ -3,6 +3,7 @@ import * as core from '@actions/core'
 import {github, owner, repo} from './get-context'
 import {createIssueTitleString} from './utils/create-issues-title-string'
 import {logNewIssue} from './logging/log-new-issue'
+import {generateBranchUrl} from './utils/generateBranchUrl'
 
 /**
  * Creates a GitHub issue
@@ -24,17 +25,17 @@ import {logNewIssue} from './logging/log-new-issue'
 export async function createIssue(branch: string, commitAge: number, lastCommitter: string, daysBeforeDelete: number, staleBranchLabel: string, tagLastCommitter: boolean): Promise<number> {
   let issueId: number
   let bodyString: string
-  let assignees: string[] = []
+  const assignees: string[] = []
   const daysUntilDelete = Math.max(0, daysBeforeDelete - commitAge)
   const issueTitleString = createIssueTitleString(branch)
 
   switch (tagLastCommitter) {
     case true:
-      bodyString = `@${lastCommitter}, \r \r ${branch} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`
+      bodyString = `@${lastCommitter}, \r \r ${generateBranchUrl(owner, repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`
       assignees.push(lastCommitter)
       break
     case false:
-      bodyString = `${branch} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`
+      bodyString = `${generateBranchUrl(owner, repo, branch)} has had no activity for ${commitAge.toString()} days. \r \r This branch will be automatically deleted in ${daysUntilDelete.toString()} days.`
       break
   }
 
@@ -44,7 +45,7 @@ export async function createIssue(branch: string, commitAge: number, lastCommitt
       repo,
       title: issueTitleString,
       body: bodyString,
-      assignees: assignees,
+      assignees,
       labels: [
         {
           name: staleBranchLabel,
