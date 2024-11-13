@@ -21,7 +21,7 @@ jobs:
         repo-token: "${{ secrets.STALE_BRANCHES }}"
         days-before-stale: 0
         comment-updates: true
-        tag-committer: true
+        tag-committer: false
         days-before-delete: 180
         max-issues: 20
         stale-branch-label: 'stale branch 🗑️'
